@@ -14,6 +14,21 @@ const server = http.createServer((req, res) => {
     const readableStream = fs.createReadStream('sample.txt')
 
     readableStream.pipe(res)
+
+    //---------------------
+    //copy big file into another file
+
+    const readStream = fs.createReadStream('sample.txt')
+    const writeStream = fs.createWriteStream('output.txt')
+
+    readStream.on('data', (chunkData) => {
+        console.log('chunk: ', chunkData.toString())
+
+        writeStream.write(chunkData)
+    })
+
+    //------------------------
+    res.end()
 })
 
 const PORT = process.env.PORT || 4000
