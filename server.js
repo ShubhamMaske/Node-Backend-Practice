@@ -8,10 +8,12 @@ const server = http.createServer((req, res) => {
     }
 
     //bad way
-    const file = fs.readFileSync('sample.txt')
-    
-    
-    return res.end(file)
+    // const file = fs.readFileSync('sample.txt');
+
+    //good way of reading large file
+    const readableStream = fs.createReadStream('sample.txt')
+
+    readableStream.pipe(res)
 })
 
 const PORT = process.env.PORT || 4000
