@@ -15,7 +15,7 @@ const server = http.createServer((req, res) => {
 
     readableStream.pipe(res)
 
-    //---------------------
+    //------------------------------//
     //copy big file into another file
 
     const readStream = fs.createReadStream('sample.txt')
@@ -27,7 +27,26 @@ const server = http.createServer((req, res) => {
         writeStream.write(chunkData)
     })
 
-    //------------------------
+    //----------------------------------//
+
+    // string Processing
+    const sampleStream = fs.createReadStream('sample.txt')
+
+    const outputWritableStream = fs.createWriteStream('proceedString.txt')
+
+    sampleStream.on('data', (chunk) => {
+        console.log('data received: ', chunk.toString())
+
+        // processing
+        const upperCaseStream = chunk.toString().toUpperCase()
+
+        const finalStream = upperCaseStream.replaceAll(/ipsum/gi, 'shubh')
+
+        //writable stream
+        outputWritableStream.write(finalStream)
+    })
+
+    // ---------------------------------//
     res.end()
 })
 
