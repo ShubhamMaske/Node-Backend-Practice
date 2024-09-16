@@ -1,6 +1,6 @@
 const http = require('http')
 const fs = require('fs')
-const { Transform } = require('stream')
+const { Transform, pipeline } = require('stream')
 
 const server = http.createServer((req, res) => {
 
@@ -56,7 +56,19 @@ const server = http.createServer((req, res) => {
         }
     })
 
-    sampleStream.pipe(replaceWordProcessing).pipe(outputWritableStream)
+    // sampleStream.pipe(replaceWordProcessing).pipe(outputWritableStream)
+    // pipe() want  readable stream on left side and writable stream on right side
+
+    pipeline(
+        replaceWordProcessing,
+        outputWritableStream,
+        (err) => {
+            if(err) {
+                // error handling logic here
+                console.log(err)
+            }
+        }
+    )
 
 
     // ---------------------------------//
