@@ -1,5 +1,6 @@
 const http = require('http')
 const fs = require('fs')
+const { Transform } = require('stream')
 
 const server = http.createServer((req, res) => {
 
@@ -29,22 +30,34 @@ const server = http.createServer((req, res) => {
 
     //----------------------------------//
 
-    // string Processing
+    // //--string Processing
     const sampleStream = fs.createReadStream('sample.txt')
 
     const outputWritableStream = fs.createWriteStream('proceedString.txt')
 
-    sampleStream.on('data', (chunk) => {
-        console.log('data received: ', chunk.toString())
+    // sampleStream.on('data', (chunk) => {
+    //     console.log('data received: ', chunk.toString())
 
-        // processing
-        const upperCaseStream = chunk.toString().toUpperCase()
+    //     // //--processing
+    //     const upperCaseStream = chunk.toString().toUpperCase()
 
-        const finalStream = upperCaseStream.replaceAll(/ipsum/gi, 'shubh')
+    //     const finalStream = upperCaseStream.replaceAll(/ipsum/gi, 'shubh')
 
-        //writable stream
-        outputWritableStream.write(finalStream)
+    //     // //--writable stream
+    //     outputWritableStream.write(finalStream)
+    // })
+    // //This above commented work we can do with Transform and Pipe
+
+    const replaceWordProcessing = new Transform({
+        transform(chunk, encoding, callback) {
+            const finalString = chunk.toString().replaceAll(/ipsum/gi,'shubh')
+
+            callback(null, finalString)
+        }
     })
+
+    sampleStream.pipe(replaceWordProcessing).pipe(outputWritableStream)
+
 
     // ---------------------------------//
     res.end()
